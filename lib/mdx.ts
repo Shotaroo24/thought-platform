@@ -1,0 +1,50 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+
+export type Lang = 'ar' | 'en'
+
+export type Frontmatter = {
+  title: string
+  date: string
+  slug: string
+  description: string
+  ogImage?: string
+}
+
+function contentDir(lang: Lang): string {
+  return path.join(process.cwd(), 'content', lang)
+}
+
+export function getMdxSlugs(lang: Lang): string[] {
+  const dir = contentDir(lang)
+  if (!fs.existsSync(dir)) return []
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.mdx'))
+    .map((f) => f.replace(/\.mdx$/, ''))
+}
+
+export function getMdxBySlug(lang: Lang, slug: string): { frontmatter: Frontmatter; content: string } {
+  const filePath = path.join(contentDir(lang), `${slug}.mdx`)
+  const raw = fs.readFileSync(filePath, 'utf-8')
+  const { data, content } = matter(raw)
+  return {
+    frontmatter: data as Frontmatter,
+    content,
+  }
+}
+
+export function getAllMdxFrontmatter(lang: Lang): Frontmatter[] {
+  return getMdxSlugs(lang)
+    .map((slug) => getMdxBySlug(lang, slug).frontmatter)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+}
+
+// 日付昇順で「次の記事」（現在より古いもの）を返す。なければ null
+export function getNextArticle(lang: Lang, currentSlug: string): Frontmatter | null {
+  const articles = getAllMdxFrontmatter(lang) // newest-first
+  const idx = articles.findIndex((a) => a.slug === currentSlug)
+  if (idx === -1 || idx === articles.length - 1) return null
+  return articles[idx + 1]
+}
