@@ -1,7 +1,15 @@
 import type { Metadata } from 'next'
-import { Markazi_Text, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google'
+import { Newsreader, Markazi_Text, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google'
 import { headers } from 'next/headers'
 import '@/app/globals.css'
+
+const newsreader = Newsreader({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-newsreader',
+  preload: true,
+})
 
 const markaziText = Markazi_Text({
   weight: ['400', '500', '600', '700'],
@@ -45,7 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang={locale}
       dir={isRtl ? 'rtl' : 'ltr'}
-      className={`${markaziText.variable} ${ibmPlexSans.variable} ${ibmPlexSansArabic.variable}`}
+      className={`${newsreader.variable} ${markaziText.variable} ${ibmPlexSans.variable} ${ibmPlexSansArabic.variable}`}
     >
       <body>{children}</body>
     </html>

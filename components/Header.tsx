@@ -6,7 +6,15 @@ type Props = {
   slug?: string
 }
 
-const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? 'المنصة'
+const BRAND: Record<Lang, string> = {
+  en: 'Al-Manassa',
+  ar: 'المنصة',
+}
+
+const ALL_ARTICLES: Record<Lang, string> = {
+  en: 'All articles',
+  ar: 'كل المقالات',
+}
 
 export function Header({ lang, slug }: Props) {
   const otherLang: Lang = lang === 'ar' ? 'en' : 'ar'
@@ -14,24 +22,22 @@ export function Header({ lang, slug }: Props) {
 
   return (
     <header className="site-header">
-      <div className="site-header-inner">
+      <div className="site-header-inner shell">
         <Link href={`/${lang}`} className="site-name">
-          {SITE_NAME}
+          {BRAND[lang]}
         </Link>
 
         <nav className="header-nav">
-          <Link href={`/${lang}`} className="nav-link">
-            All articles
+          <Link href={`/${lang}`} className="nav-link" aria-current="page">
+            {ALL_ARTICLES[lang]}
           </Link>
 
-          <span className="nav-sep" aria-hidden="true">|</span>
-
-          <div className="lang-switch">
+          <div className="lang-switch" role="group" aria-label="Language">
             <Link
               href={lang === 'ar' ? '#' : switchHref}
               className="lang-btn"
               aria-current={lang === 'ar' ? 'true' : undefined}
-              aria-label="Arabic"
+              aria-label="العربية"
             >
               ع
             </Link>

@@ -5,15 +5,18 @@ type Props = {
   lang: Lang
 }
 
-const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? 'المنصة'
+const BRAND: Record<Lang, string> = {
+  en: 'Al-Manassa',
+  ar: 'المنصة',
+}
 
 export function Footer({ lang }: Props) {
   return (
     <footer className="site-footer">
-      <div className="site-footer-inner">
+      <div className="site-footer-inner shell">
         <div className="footer-start">
           <Link href={`/${lang}`} className="footer-wordmark">
-            {SITE_NAME}
+            {BRAND[lang]}
           </Link>
           <span className="footer-copy">© 2026</span>
         </div>
@@ -27,7 +30,6 @@ export function Footer({ lang }: Props) {
             >
               Instagram
             </a>
-            <span className="footer-dot" aria-hidden="true">·</span>
             <a
               href="https://www.tiktok.com/"
               target="_blank"

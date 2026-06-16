@@ -8,16 +8,16 @@ type Props = {
 
 export function ArticleCard({ article, lang }: Props) {
   return (
-    <Link href={`/${lang}/${article.slug}`} className="article-card">
-      <div className="article-card-main">
-        <p className="article-card-date">{article.date}</p>
-        <h2 className="article-card-title">{article.title}</h2>
+    <Link href={`/${lang}/${article.slug}`} className="card">
+      <div className="card-main">
+        <p className="card-meta">{article.date}</p>
+        <h2 className="card-title">{article.title}</h2>
         {article.description && (
-          <p className="article-card-desc">{article.description}</p>
+          <p className="card-desc">{article.description}</p>
         )}
       </div>
-      <span className="article-card-arrow" aria-hidden="true">
-        {lang === 'ar' ? '←' : '→'}
+      <span className="card-arrow" aria-hidden="true">
+        →
       </span>
     </Link>
   )
