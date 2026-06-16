@@ -37,16 +37,18 @@ export default async function ArticleListPage({ params }: Props) {
                   href={`/${lang}/${article.slug}`}
                   className="card pinned"
                 >
-                  <p className="card-label">
-                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M14 2l1 1-1 5 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4-1-5 1-1z" />
-                    </svg>
-                    {START_HERE[lang as Lang]}
-                  </p>
-                  <h2 className="card-title">{article.title}</h2>
-                  {article.description && (
-                    <p className="card-desc">{article.description}</p>
-                  )}
+                  <div className="card-main">
+                    <p className="card-label">
+                      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M14 2l1 1-1 5 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4-1-5 1-1z" />
+                      </svg>
+                      {START_HERE[lang as Lang]}
+                    </p>
+                    <h2 className="card-title">{article.title}</h2>
+                    {article.description && (
+                      <p className="card-desc">{article.description}</p>
+                    )}
+                  </div>
                 </Link>
               ))}
               <div className="journey">

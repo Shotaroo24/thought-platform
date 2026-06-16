@@ -67,6 +67,8 @@ body {
   padding: 0;
 }
 
+.ltr { unicode-bidi: isolate; direction: ltr; }
+
 /* ── Shell (centered column) ─────────────────────────────────── */
 .shell {
   max-width: calc(var(--measure) + 5rem);
@@ -601,6 +603,7 @@ body {
   margin-bottom: 0.4em;
 }
 
+.footer-dot { color: var(--muted); user-select: none; }
 .footer-link {
   font-size: 13px;
   color: var(--nav);
