@@ -9,6 +9,7 @@ export type Frontmatter = {
   date: string
   slug: string
   description: string
+  pinned?: boolean
   ogImage?: string
 }
 
@@ -42,8 +43,9 @@ export function getAllMdxFrontmatter(lang: Lang): Frontmatter[] {
 }
 
 // 日付昇順で「次の記事」（現在より古いもの）を返す。なければ null
+// ピン留め記事（イントロ）は次の記事の連鎖から除外する
 export function getNextArticle(lang: Lang, currentSlug: string): Frontmatter | null {
-  const articles = getAllMdxFrontmatter(lang) // newest-first
+  const articles = getAllMdxFrontmatter(lang).filter((a) => !a.pinned) // newest-first
   const idx = articles.findIndex((a) => a.slug === currentSlug)
   if (idx === -1 || idx === articles.length - 1) return null
   return articles[idx + 1]

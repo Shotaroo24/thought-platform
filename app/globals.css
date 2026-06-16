@@ -10,7 +10,7 @@
   --muted-faint:   #A8A496;
   --nav:           #5B5B58;
   --lang-inactive: #B0AA9B;
-  --accent:        #0A6CFF;
+  --accent:        #B0542F;
   --rule:          #E6E1D4;
   --rule-faint:    #EBE6D9;
   --border:        #E0D9C8;
@@ -25,7 +25,7 @@
   --color-muted:       #8D8A80;
   --color-muted-faint: #A8A496;
   --color-nav:         #5B5B58;
-  --color-accent:      #0A6CFF;
+  --color-accent:      #B0542F;
   --color-rule:        #E6E1D4;
   --color-border:      #E0D9C8;
   --color-ornament:    #CDC8BB;
@@ -160,50 +160,192 @@ body {
 .article-list {
   max-width: 680px;
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: 3.5rem 1.5rem 5rem;
+  position: relative;
 }
 
+/* pinned trailhead — the "start here" card above the thread */
+.pinned-card {
+  display: block;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--rule));
+  border-radius: 12px;
+  padding: 1.5rem 1.6rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.pinned-card:hover {
+  border-color: var(--accent);
+}
+
+.pinned-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.6em;
+}
+
+.pinned-label svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pinned-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.18;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+:lang(en) .pinned-title { font-size: 27px; }
+:lang(ar) .pinned-title { font-size: 31px; letter-spacing: 0; }
+
+.pinned-desc {
+  font-family: var(--font-serif);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0.5em 0 0;
+}
+
+:lang(en) .pinned-desc { font-size: 17px; }
+:lang(ar) .pinned-desc { font-size: 19px; }
+
+/* journey timeline — entries strung along a single thread.
+   thread center sits at 7px from the journey edge; dots are centered on it. */
+.journey {
+  position: relative;
+  margin-top: 1.85rem;
+  padding-inline-start: 2.5rem;
+}
+
+.journey::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 6px;
+  top: 2.35rem;
+  bottom: 3.4rem;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--rule);
+}
+
+/* card: whole entry is a single link, with a node on the thread */
 .article-card {
-  padding: 2rem 0;
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 1.7rem 0;
   border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
 }
 
-.article-card:first-child {
-  padding-top: 0;
+/* node: hollow ring centered on the thread, level with the date line.
+   card content box starts 2.5rem (40px) in; thread center is 7px in,
+   so the 12px ring sits at inset -39px (7 - 6 - 40). */
+.article-card::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -39px;
+  top: 1.9rem;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--muted);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.article-card:hover::before {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 6%, transparent);
 }
 
 .article-card:last-child {
   border-bottom: none;
 }
 
-.article-card-title {
-  font-family: var(--font-serif);
-  font-size: clamp(22px, 3.5vw, 26px);
-  font-weight: 600;
-  line-height: 1.4;
-  color: var(--ink);
-  text-decoration: none;
-  display: block;
-  margin-bottom: 0.4em;
-}
-
-.article-card-title:hover {
-  color: var(--accent);
+.article-card-main {
+  flex: 1;
+  min-width: 0;
 }
 
 .article-card-date {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: var(--muted);
-  margin: 0 0 0.6em;
+  margin: 0 0 0.5em;
+}
+
+.article-card-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.18;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+  transition: color 0.15s ease;
+}
+
+:lang(en) .article-card-title { font-size: 26px; }
+:lang(ar) .article-card-title { font-size: 30px; letter-spacing: 0; }
+
+.article-card:hover .article-card-title {
+  color: var(--accent);
 }
 
 .article-card-desc {
   font-family: var(--font-serif);
-  font-size: 17px;
-  line-height: 1.7;
-  color: var(--muted);
-  margin: 0;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0.5em 0 0;
+}
+
+:lang(en) .article-card-desc { font-size: 17px; }
+:lang(ar) .article-card-desc { font-size: 19px; }
+
+/* hover arrow */
+.article-card-arrow {
+  flex-shrink: 0;
+  align-self: center;
+  font-family: var(--font-ui);
+  font-size: 20px;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+:lang(ar) .article-card-arrow {
+  transform: scaleX(-1) translateX(-6px);
+}
+
+.article-card:hover .article-card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+:lang(ar) .article-card:hover .article-card-arrow {
+  transform: scaleX(-1) translateX(0);
+}
+
+@media (hover: none) {
+  .article-card-arrow { opacity: 0.6; transform: none; }
+  :lang(ar) .article-card-arrow { transform: scaleX(-1); }
 }
 
 /* ── Article page ────────────────────────────────────────────── */
