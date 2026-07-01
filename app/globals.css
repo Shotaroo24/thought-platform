@@ -94,24 +94,21 @@ body {
   gap: 1rem;
 }
 
-.site-name {
-  font-family: var(--font-serif);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+.site-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 22px;
+  letter-spacing: -0.02em;
   color: var(--ink);
   text-decoration: none;
-  flex-shrink: 0;
   line-height: 1;
   white-space: nowrap;
 }
 
-.site-name:hover {
+.site-logo:hover {
   opacity: 0.7;
-}
-
-:lang(ar) .site-name {
-  font-size: 24px;
 }
 
 .header-nav {
@@ -333,7 +330,7 @@ body {
 }
 
 :lang(ar) .card-arrow {
-  transform: translateX(6px);
+  transform: scaleX(-1) translateX(6px);
 }
 
 .card:hover .card-arrow {
@@ -341,8 +338,13 @@ body {
   transform: translateX(0);
 }
 
+:lang(ar) .card:hover .card-arrow {
+  transform: scaleX(-1) translateX(0);
+}
+
 @media (hover: none) {
   .card-arrow { opacity: 0.6; transform: none; }
+  :lang(ar) .card-arrow { transform: scaleX(-1); }
 }
 
 /* ── Article page ────────────────────────────────────────────── */
@@ -570,20 +572,19 @@ body {
   flex-wrap: wrap;
 }
 
-.footer-wordmark {
-  display: block;
-  font-family: var(--font-serif);
+.footer-logo {
+  display: flex;
+  margin-bottom: 0.45em;
+  font-family: 'Times New Roman', Times, serif;
   font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: -0.02em;
   color: var(--ink);
   text-decoration: none;
   line-height: 1;
-  margin-bottom: 0.45em;
   white-space: nowrap;
 }
 
-.footer-wordmark:hover {
+.footer-logo:hover {
   opacity: 0.7;
 }
 

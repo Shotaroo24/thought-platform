@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getMdxBySlug, getMdxSlugs, getNextArticle } from '@/lib/mdx'
+import { formatArticleDate, formatArticleDateLong, getMdxBySlug, getMdxSlugs, getNextArticle } from '@/lib/mdx'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -86,8 +86,11 @@ export default async function ArticlePage({
   const canonicalUrl = `${siteUrl}/${lang}/${slug}`
 
   const mins = readingTimeMin(content, lang as 'ar' | 'en')
-  const readLabel = lang === 'ar' ? `${mins} دق قراءة` : `${mins} min read`
-  const metaText = `${frontmatter.date} · ${readLabel}`
+  const readLabel = `${mins} min read`
+  const metaText =
+    lang === 'ar'
+      ? formatArticleDateLong(frontmatter.date, 'ar')
+      : `${formatArticleDate(frontmatter.date, 'en')} · ${readLabel}`
 
   return (
     <>

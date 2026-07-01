@@ -6,11 +6,6 @@ type Props = {
   slug?: string
 }
 
-const BRAND: Record<Lang, string> = {
-  en: 'Al-Manassa',
-  ar: 'المنصة',
-}
-
 const ALL_ARTICLES: Record<Lang, string> = {
   en: 'All articles',
   ar: 'كل المقالات',
@@ -23,8 +18,8 @@ export function Header({ lang, slug }: Props) {
   return (
     <header className="site-header">
       <div className="site-header-inner shell">
-        <Link href={`/${lang}`} className="site-name">
-          {BRAND[lang]}
+        <Link href={`/${lang}`} className="site-logo">
+          the long thought
         </Link>
 
         <nav className="header-nav">

@@ -17,13 +17,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  const locale =
-    LOCALES.find((l) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`) ??
-    DEFAULT_LOCALE
-
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-locale', locale)
-  return NextResponse.next({ request: { headers: requestHeaders } })
+  return NextResponse.next()
 }
 
 export const config = {

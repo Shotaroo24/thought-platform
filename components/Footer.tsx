@@ -5,18 +5,13 @@ type Props = {
   lang: Lang
 }
 
-const BRAND: Record<Lang, string> = {
-  en: 'Al-Manassa',
-  ar: 'المنصة',
-}
-
 export function Footer({ lang }: Props) {
   return (
     <footer className="site-footer">
       <div className="site-footer-inner shell">
         <div className="footer-start">
-          <Link href={`/${lang}`} className="footer-wordmark">
-            {BRAND[lang]}
+          <Link href={`/${lang}`} className="footer-logo">
+            the long thought
           </Link>
           <span className="footer-copy">© 2026</span>
         </div>
