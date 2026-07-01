@@ -21,5 +21,8 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  // Skip: api routes, Next internals, and any path with a file extension
+  // (robots.txt, sitemap.xml, /og/*.png, icons, etc.) so metadata routes and
+  // static assets are NOT redirected into the locale segment.
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'],
 }
