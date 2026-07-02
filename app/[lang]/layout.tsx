@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Newsreader, Markazi_Text, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { SITE_URL } from '@/lib/site'
 import '@/app/globals.css'
 
 const newsreader = Newsreader({
@@ -45,7 +46,6 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://thelongthought.com'
   const title = {
     default: 'The Long Thought',
     template: '%s | The Long Thought',
@@ -55,13 +55,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = lang === 'ar' ? 'ar_SA' : 'en_US'
 
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(SITE_URL),
     title,
     description,
     openGraph: {
       title,
       description,
-      url: siteUrl,
+      url: SITE_URL,
       type: 'website',
       locale,
       images: [{ url: '/og/default.png', width: 1200, height: 630 }],

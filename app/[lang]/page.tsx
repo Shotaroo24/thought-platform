@@ -16,6 +16,8 @@ const START_HERE: Record<Lang, string> = {
 
 export default async function ArticleListPage({ params }: Props) {
   const { lang } = await params
+  // `lang as Lang` casts below are safe: generateStaticParams only ever
+  // produces 'ar' | 'en' for this route, so `lang` can't be anything else.
   const articles = getAllMdxFrontmatter(lang as Lang)
   const pinned = articles.filter((a) => a.pinned)
   const rest = articles.filter((a) => !a.pinned)

@@ -30,6 +30,8 @@ export function getMdxBySlug(lang: Lang, slug: string): { frontmatter: Frontmatt
   const filePath = path.join(contentDir(lang), `${slug}.mdx`)
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
+  // Cast is safe here: all .mdx files under content/ are authored in this repo,
+  // not user-submitted, so frontmatter shape is guaranteed by convention.
   return {
     frontmatter: data as Frontmatter,
     content,

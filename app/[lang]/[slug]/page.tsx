@@ -7,6 +7,7 @@ import { ScrollDepth } from '@/components/ScrollDepth'
 import { ShareBar } from '@/components/ShareBar'
 import { NextArticleCTA } from '@/components/NextArticleCTA'
 import type { Lang } from '@/lib/mdx'
+import { SITE_URL } from '@/lib/site'
 
 type Params = { lang: string; slug: string }
 
@@ -30,6 +31,8 @@ export async function generateStaticParams({
   params: { lang: string }
 }) {
   const { lang } = params
+  // `lang as Lang` casts in this file are safe: the parent route's
+  // generateStaticParams only ever produces 'ar' | 'en'.
   return getMdxSlugs(lang as Lang).map((slug) => ({ slug }))
 }
 
@@ -40,8 +43,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang, slug } = await params
   const { frontmatter } = getMdxBySlug(lang as Lang, slug)
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://example.com'
-  const canonical = `${siteUrl}/${lang}/${slug}`
+  const canonical = `${SITE_URL}/${lang}/${slug}`
   const ogImage = frontmatter.ogImage ?? '/og/default.png'
   const locale = lang === 'ar' ? 'ar_SA' : 'en_US'
   const altLocale = lang === 'ar' ? 'en_US' : 'ar_SA'
@@ -52,8 +54,8 @@ export async function generateMetadata({
     alternates: {
       canonical,
       languages: {
-        ar: `${siteUrl}/ar/${slug}`,
-        en: `${siteUrl}/en/${slug}`,
+        ar: `${SITE_URL}/ar/${slug}`,
+        en: `${SITE_URL}/en/${slug}`,
       },
     },
     openGraph: {
@@ -82,8 +84,7 @@ export default async function ArticlePage({
   const { lang, slug } = await params
   const { frontmatter, content } = getMdxBySlug(lang as Lang, slug)
   const nextArticle = getNextArticle(lang as Lang, slug)
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://example.com'
-  const canonicalUrl = `${siteUrl}/${lang}/${slug}`
+  const canonicalUrl = `${SITE_URL}/${lang}/${slug}`
 
   const mins = readingTimeMin(content, lang as 'ar' | 'en')
   const readLabel = `${mins} min read`

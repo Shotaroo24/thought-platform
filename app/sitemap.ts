@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getMdxSlugs } from '@/lib/mdx'
+import { SITE_URL } from '@/lib/site'
 
 const LANGS = ['ar', 'en'] as const
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://example.com'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = []
