@@ -98,7 +98,7 @@ body {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-times), 'Times New Roman', Times, serif;
   font-size: 22px;
   letter-spacing: -0.02em;
   color: var(--ink);
@@ -575,7 +575,7 @@ body {
 .footer-logo {
   display: flex;
   margin-bottom: 0.45em;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-times), 'Times New Roman', Times, serif;
   font-size: 20px;
   letter-spacing: -0.02em;
   color: var(--ink);

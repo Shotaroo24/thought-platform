@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Newsreader, Markazi_Text, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google'
+import { Newsreader, Markazi_Text, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, Tinos } from 'next/font/google'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { SITE_URL } from '@/lib/site'
 import '@/app/globals.css'
@@ -32,6 +32,16 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic'],
   display: 'swap',
   variable: '--font-sans-ar',
+})
+
+// Times New Roman と metric-compatible なロゴ専用フォント。
+// 本文のNewsreader(--font-serif)とは別系統として、ワードマークの環境依存を解消する。
+const tinos = Tinos({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-times',
+  preload: true,
 })
 
 export async function generateStaticParams() {
@@ -84,7 +94,7 @@ export default async function LangLayout({ children, params }: Props) {
     <html
       lang={lang}
       dir={isRtl ? 'rtl' : 'ltr'}
-      className={`${newsreader.variable} ${markaziText.variable} ${ibmPlexSans.variable} ${ibmPlexSansArabic.variable}`}
+      className={`${newsreader.variable} ${markaziText.variable} ${ibmPlexSans.variable} ${ibmPlexSansArabic.variable} ${tinos.variable}`}
     >
       <body>
         {children}
