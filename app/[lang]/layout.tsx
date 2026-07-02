@@ -45,14 +45,33 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://thelongthought.com'
+  const title = {
+    default: 'The Long Thought',
+    template: '%s | The Long Thought',
+  }
+  const description =
+    lang === 'ar' ? 'منصة فكرية للكتابة العميقة' : 'A platform for deep, slow writing.'
+  const locale = lang === 'ar' ? 'ar_SA' : 'en_US'
+
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://example.com'),
-    title: {
-      default: 'The Long Thought',
-      template: '%s | The Long Thought',
+    metadataBase: new URL(siteUrl),
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: siteUrl,
+      type: 'website',
+      locale,
+      images: [{ url: '/og/default.png', width: 1200, height: 630 }],
     },
-    description:
-      lang === 'ar' ? 'منصة فكرية للكتابة العميقة' : 'A platform for deep, slow writing.',
+    twitter: {
+      card: 'summary_large_image',
+      title: title.default,
+      description,
+      images: ['/og/default.png'],
+    },
   }
 }
 
