@@ -1,8 +1,15 @@
 import type { NextConfig } from "next";
 
+// 'unsafe-eval' is only needed in dev mode: Turbopack/React use eval() for
+// stack-trace reconstruction there. React never uses eval() in production,
+// so the production CSP stays eval-free.
+const scriptSrc = process.env.NODE_ENV === 'production'
+  ? "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com"
+  : "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com"
+
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  scriptSrc,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com",
   "font-src 'self'",
