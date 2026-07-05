@@ -193,10 +193,10 @@ body {
   position: absolute;
   inset-inline-start: 6px;
   top: 2.35rem;
-  bottom: 3.4rem;
+  bottom: 3rem;
   width: 2px;
   border-radius: 2px;
-  background: var(--rule);
+  background: color-mix(in srgb, var(--ink) 18%, transparent);
 }
 
 /* ── Card (clickable article entry) ─────────────────────────── */
@@ -346,6 +346,39 @@ body {
   .card-arrow { opacity: 0.6; transform: none; }
   :lang(ar) .card-arrow { transform: scaleX(-1); }
 }
+
+/* ── Ghost node (timeline placeholder, not a link) ──────────────
+   Always rendered last in .journey. Remove once the archive has
+   grown enough that an announced "more is coming" reads as noise. */
+.ghost-node {
+  position: relative;
+  padding: 1.7rem 0;
+  cursor: default;
+}
+
+.ghost-node::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -37px;
+  top: 1.95rem;
+  width: 8px;
+  height: 8px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1.5px dashed var(--muted);
+  opacity: 0.55;
+}
+
+.ghost-node-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  line-height: 1.6rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+:lang(en) .ghost-node-text { font-size: 18px; }
+:lang(ar) .ghost-node-text { font-size: 20px; }
 
 /* ── Article page ────────────────────────────────────────────── */
 .article-page {

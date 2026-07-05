@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { formatArticleDate, formatArticleDateLong, getMdxBySlug, getMdxSlugs, getNextArticle } from '@/lib/mdx'
+import { formatArticleDate, getMdxBySlug, getMdxSlugs, getNextArticle } from '@/lib/mdx'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -90,7 +90,7 @@ export default async function ArticlePage({
   const readLabel = `${mins} min read`
   const metaText =
     lang === 'ar'
-      ? formatArticleDateLong(frontmatter.date, 'ar')
+      ? formatArticleDate(frontmatter.date, 'ar')
       : `${formatArticleDate(frontmatter.date, 'en')} · ${readLabel}`
 
   return (

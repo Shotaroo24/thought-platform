@@ -1,6 +1,7 @@
 import Link from 'next/link'
-import { getAllMdxFrontmatter } from '@/lib/mdx'
+import { getAllArticlesWithExcerpt } from '@/lib/mdx'
 import { ArticleCard } from '@/components/ArticleCard'
+import { GhostNode } from '@/components/GhostNode'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import type { Lang } from '@/lib/mdx'
@@ -18,7 +19,7 @@ export default async function ArticleListPage({ params }: Props) {
   const { lang } = await params
   // `lang as Lang` casts below are safe: generateStaticParams only ever
   // produces 'ar' | 'en' for this route, so `lang` can't be anything else.
-  const articles = getAllMdxFrontmatter(lang as Lang)
+  const articles = getAllArticlesWithExcerpt(lang as Lang)
   const pinned = articles.filter((a) => a.pinned)
   const rest = articles.filter((a) => !a.pinned)
 
@@ -57,6 +58,7 @@ export default async function ArticleListPage({ params }: Props) {
                 {rest.map((article) => (
                   <ArticleCard key={article.slug} article={article} lang={lang as Lang} />
                 ))}
+                <GhostNode lang={lang as Lang} />
               </div>
             </>
           )}

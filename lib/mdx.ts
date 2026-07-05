@@ -38,10 +38,58 @@ export function getMdxBySlug(lang: Lang, slug: string): { frontmatter: Frontmatt
   }
 }
 
-export function getAllMdxFrontmatter(lang: Lang): Frontmatter[] {
+function getAllMdxSorted(lang: Lang): { frontmatter: Frontmatter; content: string }[] {
   return getMdxSlugs(lang)
-    .map((slug) => getMdxBySlug(lang, slug).frontmatter)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .map((slug) => getMdxBySlug(lang, slug))
+    .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
+}
+
+export function getAllMdxFrontmatter(lang: Lang): Frontmatter[] {
+  return getAllMdxSorted(lang).map((a) => a.frontmatter)
+}
+
+// Strips the leading markdown/JSX markup a card preview shouldn't show
+// (headings, blockquote markers, links, emphasis, inline tags like <br />).
+function stripMdxInline(line: string): string {
+  return line
+    .replace(/^#{1,6}\s+/, '')
+    .replace(/^>\s?/, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/(\*\*|__|\*|_|`)/g, '')
+}
+
+// Takes the article's opening paragraph (skipping headings) as the homepage
+// card preview, in place of a hand-written summary. Truncates at a word
+// boundary so longer articles don't cut off mid-word.
+export function getArticleExcerpt(content: string, maxLength = 180): string {
+  const paragraph = content
+    .split(/\r?\n\s*\r?\n/)
+    .map((block) => block.trim())
+    .find((block) => block.length > 0 && !block.startsWith('#'))
+  if (!paragraph) return ''
+
+  const text = paragraph
+    .split(/\r?\n/)
+    .map(stripMdxInline)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (text.length <= maxLength) return text
+
+  const truncated = text.slice(0, maxLength)
+  const lastSpace = truncated.lastIndexOf(' ')
+  return `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLength).trimEnd()}…`
+}
+
+export type ArticleListItem = Frontmatter & { excerpt: string }
+
+export function getAllArticlesWithExcerpt(lang: Lang): ArticleListItem[] {
+  return getAllMdxSorted(lang).map(({ frontmatter, content }) => ({
+    ...frontmatter,
+    excerpt: getArticleExcerpt(content),
+  }))
 }
 
 // Arabic numerals are forced via the -u-nu-arab extension rather than relying on the
@@ -55,15 +103,6 @@ export function formatArticleDate(date: string, lang: Lang): string {
   return new Intl.DateTimeFormat(dateLocale(lang), {
     month: 'short',
     day: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(date))
-}
-
-export function formatArticleDateLong(date: string, lang: Lang): string {
-  return new Intl.DateTimeFormat(dateLocale(lang), {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
     timeZone: 'UTC',
   }).format(new Date(date))
 }

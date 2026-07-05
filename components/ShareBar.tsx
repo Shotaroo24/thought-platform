@@ -9,7 +9,7 @@ type Props = {
 }
 
 const LABEL = {
-  share:  { ar: 'مشاركة', en: 'Share' },
+  share:  { ar: 'شارك', en: 'Share' },
   copied: { ar: 'تم النسخ', en: 'Copied' },
 }
 
