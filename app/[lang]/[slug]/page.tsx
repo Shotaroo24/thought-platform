@@ -10,6 +10,7 @@ import { NextArticleCTA } from '@/components/NextArticleCTA'
 import { InstagramDmCTA } from '@/components/InstagramDmCTA'
 import { SITE_URL } from '@/lib/site'
 import type { Lang } from '@/lib/i18n'
+import { keepPhrasesTogether } from '@/lib/typography'
 
 type Params = { lang: string; slug: string }
 
@@ -124,7 +125,7 @@ export default async function ArticlePage({
         <p className="article-meta">{metaText}</p>
 
         <article className="prose">
-          <MDXRemote source={content} components={mdxComponents} />
+          <MDXRemote source={keepPhrasesTogether(content, lang)} components={mdxComponents} />
         </article>
 
         <InstagramDmCTA lang={lang} />

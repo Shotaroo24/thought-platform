@@ -334,6 +334,7 @@ body > main {
   color: var(--ink-soft);
   margin: 0.5em 0 0;
   max-width: 36rem;
+  text-wrap: pretty;
 }
 
 :lang(en) .card-desc { font-size: clamp(17px, 16.42px + 0.154vw, 18px); } /* fluid 17 → 18 */
@@ -415,6 +416,7 @@ body > main {
   color: var(--ink);
   margin: 0 0 0.5em;
   letter-spacing: 0;
+  text-wrap: balance;
 }
 
 :lang(en) .article-title {
@@ -489,6 +491,14 @@ body > main {
 .prose :where(p):not(:where([class~="not-prose"] *)) {
   margin-top: var(--prose-gap);
   margin-bottom: var(--prose-gap);
+  /* Avoids a lone word on a paragraph's last line, which on narrow phones
+     happened in about one Arabic paragraph in five. Browsers without support
+     simply wrap as before. */
+  text-wrap: pretty;
+}
+
+.prose :where(h2, h3):not(:where([class~="not-prose"] *)) {
+  text-wrap: balance;
 }
 
 .prose :where(a):not(:where([class~="not-prose"] *)) {

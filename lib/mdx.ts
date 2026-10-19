@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import yaml from 'js-yaml'
 import type { Lang } from '@/lib/i18n'
+import { keepPhrasesTogether } from '@/lib/typography'
 
 export { LANGS, isLang } from '@/lib/i18n'
 export type { Lang } from '@/lib/i18n'
@@ -184,7 +185,7 @@ export type ArticleListItem = Frontmatter & { excerpt: string }
 export function getAllArticlesWithExcerpt(lang: Lang): ArticleListItem[] {
   return getAllMdxSorted(lang).map(({ frontmatter, content }) => ({
     ...frontmatter,
-    excerpt: getArticleExcerpt(content),
+    excerpt: keepPhrasesTogether(getArticleExcerpt(content), lang),
   }))
 }
 
