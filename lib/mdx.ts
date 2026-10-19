@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import matter from 'gray-matter'
+import yaml from 'js-yaml'
 
 export type Lang = 'ar' | 'en'
 
@@ -26,10 +26,21 @@ export function getMdxSlugs(lang: Lang): string[] {
     .map((f) => f.replace(/\.mdx$/, ''))
 }
 
+const FRONTMATTER_PATTERN = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/
+
+// Frontmatter is parsed with js-yaml's JSON schema: no YAML type coercion, so
+// `date: 2026-07-05` stays a string and no custom tags are resolved.
+function parseFrontmatter(raw: string): { data: unknown; content: string } {
+  const match = raw.match(FRONTMATTER_PATTERN)
+  if (!match) return { data: {}, content: raw }
+  const data = yaml.load(match[1], { schema: yaml.JSON_SCHEMA, json: true })
+  return { data: data ?? {}, content: raw.slice(match[0].length) }
+}
+
 export function getMdxBySlug(lang: Lang, slug: string): { frontmatter: Frontmatter; content: string } {
   const filePath = path.join(contentDir(lang), `${slug}.mdx`)
   const raw = fs.readFileSync(filePath, 'utf-8')
-  const { data, content } = matter(raw)
+  const { data, content } = parseFrontmatter(raw)
   // Cast is safe here: all .mdx files under content/ are authored in this repo,
   // not user-submitted, so frontmatter shape is guaranteed by convention.
   return {
