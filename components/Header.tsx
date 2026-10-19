@@ -23,7 +23,11 @@ export function Header({ lang, slug }: Props) {
         </Link>
 
         <nav className="header-nav">
-          <Link href={`/${lang}`} className="nav-link" aria-current="page">
+          <Link
+            href={`/${lang}`}
+            className="nav-link"
+            aria-current={slug ? undefined : 'page'}
+          >
             {ALL_ARTICLES[lang]}
           </Link>
 
