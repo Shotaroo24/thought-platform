@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { DEFAULT_LANG, LANGS } from '@/lib/i18n'
+import { LANGS, negotiateLang } from '@/lib/i18n'
 
 const LOCALES: readonly string[] = LANGS
-const DEFAULT_LOCALE = DEFAULT_LANG
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -13,9 +12,17 @@ export function proxy(request: NextRequest) {
   )
 
   if (!hasLocale) {
+    // Arabic browsers get Arabic, English browsers English, everyone else
+    // English. Links that already carry a locale (/ar/..., /en/...) are never
+    // overridden, so shared article links open in the language they were sent in.
+    const lang = negotiateLang(request.headers.get('accept-language'))
     const url = request.nextUrl.clone()
-    url.pathname = `/${DEFAULT_LOCALE}${pathname === '/' ? '' : pathname}`
-    return NextResponse.redirect(url)
+    url.pathname = `/${lang}${pathname === '/' ? '' : pathname}`
+    const response = NextResponse.redirect(url)
+    // The target depends on the request header, so no cache may reuse it across visitors.
+    response.headers.set('Vary', 'Accept-Language')
+    response.headers.set('Cache-Control', 'private, no-store')
+    return response
   }
 
   return NextResponse.next()

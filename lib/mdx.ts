@@ -3,7 +3,7 @@ import path from 'path'
 import yaml from 'js-yaml'
 import type { Lang } from '@/lib/i18n'
 
-export { LANGS, DEFAULT_LANG, isLang } from '@/lib/i18n'
+export { LANGS, isLang } from '@/lib/i18n'
 export type { Lang } from '@/lib/i18n'
 
 export type Frontmatter = {

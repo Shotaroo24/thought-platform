@@ -1,7 +1,7 @@
 # the long thought
 
 Shotaro のバイリンガル（アラビア語 / 英語）長文記事サイト。
-本番: https://thelongthought.com （`/` は `/ar` にリダイレクト）
+本番: https://thelongthought.com （`/` はブラウザの言語設定でアラビア語なら `/ar`、それ以外は `/en` に振り分け）
 
 Next.js 16（App Router）＋ TypeScript ＋ Tailwind CSS v4。DB・認証・バックエンドなしの完全静的サイトで、`main` への push で Vercel が自動デプロイする。
 
@@ -47,6 +47,7 @@ npm run dev           # 開発サーバー
 npm run build         # 本番ビルド
 npm run lint          # ESLint
 npx tsc --noEmit      # 型チェック
+npm test              # ユニットテスト（Node 組み込みの node:test）
 npm audit --omit=dev  # 本番依存の脆弱性チェック（0件を維持）
 ```
 
@@ -59,7 +60,7 @@ npm audit --omit=dev  # 本番依存の脆弱性チェック（0件を維持）
 | `components/` | Header / ArticleCard / GhostNode / ShareBar / InstagramDmCTA / NextArticleCTA / Footer / ScrollDepth |
 | `content/{ar,en}/` | 記事（MDX） |
 | `lib/` | `i18n.ts`（ロケール）・`mdx.ts`（読み込みと検証）・`site.ts`（サイトURL・SNSアカウント） |
-| `proxy.ts` | ロケールなしのパスを `/ar` へリダイレクト |
+| `proxy.ts` | ロケールなしのパスをブラウザの言語設定（`lib/i18n.ts` の `negotiateLang`）で `/ar` か `/en` へリダイレクト |
 | `docs/` | `SECURITY.md`（セキュリティ方針）・`UTM.md`（SNS リンクの UTM 運用） |
 
 SNS アカウント（フッター・DM ボタンのリンク先）は `lib/site.ts` の `SOCIAL_LINKS` で一元管理している。
