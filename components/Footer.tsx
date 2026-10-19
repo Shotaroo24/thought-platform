@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Lang } from '@/lib/mdx'
+import { SOCIAL_LINKS } from '@/lib/site'
 
 type Props = {
   lang: Lang
@@ -18,7 +19,7 @@ export function Footer({ lang }: Props) {
         <div className="footer-end">
           <div className="footer-social">
             <a
-              href="https://www.instagram.com/"
+              href={SOCIAL_LINKS.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
@@ -26,7 +27,7 @@ export function Footer({ lang }: Props) {
               Instagram
             </a>
             <a
-              href="https://www.tiktok.com/"
+              href={SOCIAL_LINKS.tiktok}
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
