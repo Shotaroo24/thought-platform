@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer'
 import { ScrollDepth } from '@/components/ScrollDepth'
 import { ShareBar } from '@/components/ShareBar'
 import { NextArticleCTA } from '@/components/NextArticleCTA'
+import { InstagramDmCTA } from '@/components/InstagramDmCTA'
 import { SITE_URL } from '@/lib/site'
 
 type Params = { lang: string; slug: string }
@@ -117,6 +118,7 @@ export default async function ArticlePage({
           <MDXRemote source={content} components={mdxComponents} />
         </article>
 
+        <InstagramDmCTA lang={lang} />
         <ShareBar title={frontmatter.title} url={canonicalUrl} lang={lang} />
         <NextArticleCTA next={nextArticle} lang={lang} />
       </main>

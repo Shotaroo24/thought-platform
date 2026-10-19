@@ -519,7 +519,7 @@ body > main {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 3rem;
+  margin-top: 2.5rem;
   padding-top: 2rem;
   border-top: 1px solid var(--rule);
   font-family: var(--font-ui);
@@ -562,11 +562,57 @@ body > main {
   color: var(--ink);
 }
 
-.share-icon-btn[data-copied="true"] {
+.share-icon-btn[data-status="copied"],
+.share-icon-btn[data-status="failed"] {
   width: auto;
   padding: 0 8px;
   border-color: var(--ink);
   color: var(--ink);
+}
+
+/* ── InstagramDmCTA ──────────────────────────────────────────── */
+.dm-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 3rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--tint);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--rule));
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+
+.dm-cta:hover {
+  border-color: var(--accent);
+}
+
+.dm-cta-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  color: var(--accent);
+}
+
+.dm-cta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  min-width: 0;
+}
+
+.dm-cta-prompt {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.dm-cta-action {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.35;
+  color: var(--accent);
 }
 
 /* ── NextArticleCTA ──────────────────────────────────────────── */
