@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { getAllArticlesWithExcerpt } from '@/lib/mdx'
+import { notFound } from 'next/navigation'
+import { getAllArticlesWithExcerpt, isLang } from '@/lib/mdx'
 import { ArticleCard } from '@/components/ArticleCard'
 import { GhostNode } from '@/components/GhostNode'
 import { Header } from '@/components/Header'
@@ -10,6 +11,10 @@ type Props = {
   params: Promise<{ lang: string }>
 }
 
+// Only the locales from generateStaticParams are served; anything else is a 404
+// instead of being rendered on demand with an attacker-supplied segment.
+export const dynamicParams = false
+
 const START_HERE: Record<Lang, string> = {
   en: 'Start here',
   ar: 'ابدأ من هنا',
@@ -17,15 +22,15 @@ const START_HERE: Record<Lang, string> = {
 
 export default async function ArticleListPage({ params }: Props) {
   const { lang } = await params
-  // `lang as Lang` casts below are safe: generateStaticParams only ever
-  // produces 'ar' | 'en' for this route, so `lang` can't be anything else.
-  const articles = getAllArticlesWithExcerpt(lang as Lang)
+  if (!isLang(lang)) notFound()
+
+  const articles = getAllArticlesWithExcerpt(lang)
   const pinned = articles.filter((a) => a.pinned)
   const rest = articles.filter((a) => !a.pinned)
 
   return (
     <>
-      <Header lang={lang as Lang} />
+      <Header lang={lang} />
       <main>
         <div className="article-list">
           {articles.length === 0 ? (
@@ -45,7 +50,7 @@ export default async function ArticleListPage({ params }: Props) {
                       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M14 2l1 1-1 5 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4-1-5 1-1z" />
                       </svg>
-                      {START_HERE[lang as Lang]}
+                      {START_HERE[lang]}
                     </p>
                     <h2 className="card-title">{article.title}</h2>
                     {article.description && (
@@ -56,15 +61,15 @@ export default async function ArticleListPage({ params }: Props) {
               ))}
               <div className="journey">
                 {rest.map((article) => (
-                  <ArticleCard key={article.slug} article={article} lang={lang as Lang} />
+                  <ArticleCard key={article.slug} article={article} lang={lang} />
                 ))}
-                <GhostNode lang={lang as Lang} />
+                <GhostNode lang={lang} />
               </div>
             </>
           )}
         </div>
       </main>
-      <Footer lang={lang as Lang} />
+      <Footer lang={lang} />
     </>
   )
 }

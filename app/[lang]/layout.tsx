@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Newsreader, Markazi_Text, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, Tinos } from 'next/font/google'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { LANGS, isLang } from '@/lib/mdx'
 import { SITE_URL } from '@/lib/site'
 import '@/app/globals.css'
 
@@ -45,7 +46,7 @@ const tinos = Tinos({
 })
 
 export async function generateStaticParams() {
-  return [{ lang: 'ar' }, { lang: 'en' }]
+  return LANGS.map((lang) => ({ lang }))
 }
 
 type Props = {
@@ -87,12 +88,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LangLayout({ children, params }: Props) {
   const { lang } = await params
-  const isRtl = lang === 'ar'
+  // The pages below 404 on an unknown locale (dynamicParams = false), but the
+  // layout still renders for the 404 itself: never put a raw route param into
+  // the lang/dir attributes.
+  const locale = isLang(lang) ? lang : 'ar'
+  const isRtl = locale === 'ar'
   const gaId = process.env.NEXT_PUBLIC_GA_ID
 
   return (
     <html
-      lang={lang}
+      lang={locale}
       dir={isRtl ? 'rtl' : 'ltr'}
       className={`${newsreader.variable} ${markaziText.variable} ${ibmPlexSans.variable} ${ibmPlexSansArabic.variable} ${tinos.variable}`}
     >

@@ -1,8 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import yaml from 'js-yaml'
+import type { Lang } from '@/lib/i18n'
 
-export type Lang = 'ar' | 'en'
+export { LANGS, DEFAULT_LANG, isLang } from '@/lib/i18n'
+export type { Lang } from '@/lib/i18n'
 
 export type Frontmatter = {
   title: string
@@ -13,8 +15,27 @@ export type Frontmatter = {
   ogImage?: string
 }
 
+// A slug becomes part of a filesystem path, so only the shape our own content
+// uses is accepted: lowercase kebab-case. This rejects `..`, path separators,
+// absolute paths and NUL bytes before any fs call.
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+export function isSafeSlug(value: string): boolean {
+  return SLUG_PATTERN.test(value)
+}
+
 function contentDir(lang: Lang): string {
   return path.join(process.cwd(), 'content', lang)
+}
+
+// Second line of defence behind isSafeSlug: whatever path.join produced must
+// still sit directly inside content/<lang>.
+function resolveMdxPath(lang: Lang, slug: string): string | null {
+  if (!isSafeSlug(slug)) return null
+  const dir = contentDir(lang)
+  const filePath = path.join(dir, `${slug}.mdx`)
+  if (path.dirname(filePath) !== dir) return null
+  return filePath
 }
 
 export function getMdxSlugs(lang: Lang): string[] {
@@ -24,6 +45,7 @@ export function getMdxSlugs(lang: Lang): string[] {
     .readdirSync(dir)
     .filter((f) => f.endsWith('.mdx'))
     .map((f) => f.replace(/\.mdx$/, ''))
+    .filter(isSafeSlug)
 }
 
 const FRONTMATTER_PATTERN = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/
@@ -37,21 +59,84 @@ function parseFrontmatter(raw: string): { data: unknown; content: string } {
   return { data: data ?? {}, content: raw.slice(match[0].length) }
 }
 
-export function getMdxBySlug(lang: Lang, slug: string): { frontmatter: Frontmatter; content: string } {
-  const filePath = path.join(contentDir(lang), `${slug}.mdx`)
+function requireString(
+  data: Record<string, unknown>,
+  key: keyof Frontmatter,
+  source: string
+): string {
+  const value = data[key]
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new Error(`${source}: frontmatter "${key}" must be a non-empty string`)
+  }
+  return value
+}
+
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+
+// MDX files are authored in this repo, but validating here turns a typo into a
+// build-time error with a precise message instead of an "Invalid Date" or an
+// empty card shipped to production.
+function validateFrontmatter(data: unknown, lang: Lang, slug: string): Frontmatter {
+  const source = `content/${lang}/${slug}.mdx`
+  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+    throw new Error(`${source}: frontmatter block is missing or not a mapping`)
+  }
+  const record = data as Record<string, unknown>
+
+  const date = requireString(record, 'date', source)
+  if (!DATE_PATTERN.test(date) || Number.isNaN(new Date(date).getTime())) {
+    throw new Error(`${source}: frontmatter "date" must be a valid YYYY-MM-DD date`)
+  }
+
+  const declaredSlug = requireString(record, 'slug', source)
+  if (declaredSlug !== slug) {
+    throw new Error(
+      `${source}: frontmatter "slug" is "${declaredSlug}" but the file is "${slug}.mdx"`
+    )
+  }
+
+  const { pinned, ogImage } = record
+  if (pinned !== undefined && typeof pinned !== 'boolean') {
+    throw new Error(`${source}: frontmatter "pinned" must be a boolean`)
+  }
+  // Site-relative only: frontmatter must not be able to point OG/Twitter
+  // metadata at a third-party host.
+  if (ogImage !== undefined && (typeof ogImage !== 'string' || !/^\/[^/\\]/.test(ogImage))) {
+    throw new Error(
+      `${source}: frontmatter "ogImage" must be a site-relative path like "/og/foo.png"`
+    )
+  }
+
+  return {
+    title: requireString(record, 'title', source),
+    date,
+    slug: declaredSlug,
+    description: requireString(record, 'description', source),
+    ...(pinned === undefined ? {} : { pinned }),
+    ...(ogImage === undefined ? {} : { ogImage: ogImage as string }),
+  }
+}
+
+export type Article = { frontmatter: Frontmatter; content: string }
+
+// Returns null for an unknown or unsafe slug so callers can answer 404 instead
+// of surfacing a filesystem error.
+export function getMdxBySlug(lang: Lang, slug: string): Article | null {
+  const filePath = resolveMdxPath(lang, slug)
+  if (!filePath || !fs.existsSync(filePath)) return null
+
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = parseFrontmatter(raw)
-  // Cast is safe here: all .mdx files under content/ are authored in this repo,
-  // not user-submitted, so frontmatter shape is guaranteed by convention.
   return {
-    frontmatter: data as Frontmatter,
+    frontmatter: validateFrontmatter(data, lang, slug),
     content,
   }
 }
 
-function getAllMdxSorted(lang: Lang): { frontmatter: Frontmatter; content: string }[] {
+function getAllMdxSorted(lang: Lang): Article[] {
   return getMdxSlugs(lang)
     .map((slug) => getMdxBySlug(lang, slug))
+    .filter((article): article is Article => article !== null)
     .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
 }
 

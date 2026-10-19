@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
-import { formatArticleDate, getMdxBySlug, getMdxSlugs, getNextArticle } from '@/lib/mdx'
+import { notFound } from 'next/navigation'
+import { formatArticleDate, getMdxBySlug, getMdxSlugs, getNextArticle, isLang } from '@/lib/mdx'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ScrollDepth } from '@/components/ScrollDepth'
 import { ShareBar } from '@/components/ShareBar'
 import { NextArticleCTA } from '@/components/NextArticleCTA'
-import type { Lang } from '@/lib/mdx'
 import { SITE_URL } from '@/lib/site'
 
 type Params = { lang: string; slug: string }
+
+// Only the (lang, slug) pairs from generateStaticParams are served. Without
+// this, an unknown slug would be rendered on demand and reach the filesystem.
+export const dynamicParams = false
 
 function readingTimeMin(text: string, lang: 'ar' | 'en'): number {
   const wpm = lang === 'ar' ? 180 : 238
@@ -31,9 +35,8 @@ export async function generateStaticParams({
   params: { lang: string }
 }) {
   const { lang } = params
-  // `lang as Lang` casts in this file are safe: the parent route's
-  // generateStaticParams only ever produces 'ar' | 'en'.
-  return getMdxSlugs(lang as Lang).map((slug) => ({ slug }))
+  if (!isLang(lang)) return []
+  return getMdxSlugs(lang).map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({
@@ -42,7 +45,12 @@ export async function generateMetadata({
   params: Promise<Params>
 }): Promise<Metadata> {
   const { lang, slug } = await params
-  const { frontmatter } = getMdxBySlug(lang as Lang, slug)
+  if (!isLang(lang)) notFound()
+
+  const article = getMdxBySlug(lang, slug)
+  if (!article) notFound()
+
+  const { frontmatter } = article
   const canonical = `${SITE_URL}/${lang}/${slug}`
   const ogImage = frontmatter.ogImage ?? '/og/default.png'
   const locale = lang === 'ar' ? 'ar_SA' : 'en_US'
@@ -82,11 +90,16 @@ export default async function ArticlePage({
   params: Promise<Params>
 }) {
   const { lang, slug } = await params
-  const { frontmatter, content } = getMdxBySlug(lang as Lang, slug)
-  const nextArticle = getNextArticle(lang as Lang, slug)
+  if (!isLang(lang)) notFound()
+
+  const article = getMdxBySlug(lang, slug)
+  if (!article) notFound()
+
+  const { frontmatter, content } = article
+  const nextArticle = getNextArticle(lang, slug)
   const canonicalUrl = `${SITE_URL}/${lang}/${slug}`
 
-  const mins = readingTimeMin(content, lang as 'ar' | 'en')
+  const mins = readingTimeMin(content, lang)
   const readLabel = `${mins} min read`
   const metaText =
     lang === 'ar'
@@ -95,7 +108,7 @@ export default async function ArticlePage({
 
   return (
     <>
-      <Header lang={lang as Lang} slug={slug} />
+      <Header lang={lang} slug={slug} />
       <main className="article-page">
         <h1 className="article-title">{frontmatter.title}</h1>
         <p className="article-meta">{metaText}</p>
@@ -105,9 +118,9 @@ export default async function ArticlePage({
         </article>
 
         <ShareBar title={frontmatter.title} url={canonicalUrl} lang={lang} />
-        <NextArticleCTA next={nextArticle} lang={lang as Lang} />
+        <NextArticleCTA next={nextArticle} lang={lang} />
       </main>
-      <Footer lang={lang as Lang} />
+      <Footer lang={lang} />
       <ScrollDepth slug={slug} lang={lang} />
     </>
   )

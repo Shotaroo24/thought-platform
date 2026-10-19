@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { DEFAULT_LANG, LANGS } from '@/lib/i18n'
 
-const LOCALES = ['ar', 'en']
-const DEFAULT_LOCALE = 'ar'
+const LOCALES: readonly string[] = LANGS
+const DEFAULT_LOCALE = DEFAULT_LANG
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl

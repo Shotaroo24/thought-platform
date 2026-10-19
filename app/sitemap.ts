@@ -1,8 +1,6 @@
 import type { MetadataRoute } from 'next'
-import { getMdxSlugs } from '@/lib/mdx'
+import { LANGS, getMdxSlugs } from '@/lib/mdx'
 import { SITE_URL } from '@/lib/site'
-
-const LANGS = ['ar', 'en'] as const
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = []
