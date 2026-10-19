@@ -685,18 +685,25 @@ body > main {
 }
 
 .site-footer-inner {
-  padding-top: 2rem;
-  padding-bottom: 2.5rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.75rem;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
+  align-items: baseline;
+  gap: 0.6rem 1.5rem;
   flex-wrap: wrap;
+}
+
+/* One row on desktop and tablet: wordmark + © at the start, links + email at
+   the end. A footer is the site's colophon, so it stays low and quiet. */
+.footer-start {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
 }
 
 .footer-logo {
   display: flex;
-  margin-bottom: 0.45em;
   font-family: var(--font-times), 'Times New Roman', Times, serif;
   font-size: 20px;
   letter-spacing: -0.02em;
@@ -716,17 +723,18 @@ body > main {
 }
 
 .footer-end {
-  text-align: end;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.25rem 1rem;
 }
 
 .footer-social {
   display: flex;
   gap: 0.5em;
-  justify-content: flex-end;
-  margin-bottom: 0.4em;
 }
 
-.footer-dot { color: var(--muted); user-select: none; }
 .footer-link {
   font-size: 13px;
   color: var(--nav);
@@ -737,41 +745,18 @@ body > main {
   color: var(--ink);
 }
 
-.footer-email {
-  display: block;
-}
-
-/* Phones: stacked one item per line, the footer took about a quarter of the
-   screen. Two rows (wordmark + ©, then links + email) keep it low. */
+/* Phones: the single row would wrap unevenly, so it becomes two start-aligned
+   lines (wordmark + ©, then links + email). */
 @media (max-width: 480px) {
   .site-footer-inner {
     flex-direction: column;
-    gap: 0.6rem;
+    align-items: flex-start;
     padding-top: 1.4rem;
     padding-bottom: 1.6rem;
   }
 
-  .footer-start {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-  }
-
-  .footer-logo {
-    margin-bottom: 0;
-  }
-
   .footer-end {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.25rem 1rem;
-    text-align: start;
-  }
-
-  .footer-social {
     justify-content: flex-start;
-    margin-bottom: 0;
   }
 }
 

@@ -35,7 +35,7 @@ export function Footer({ lang }: Props) {
               TikTok
             </a>
           </div>
-          <a href="mailto:shotaro21.info@gmail.com" className="footer-link footer-email">
+          <a href="mailto:shotaro21.info@gmail.com" className="footer-link">
             shotaro21.info@gmail.com
           </a>
         </div>
