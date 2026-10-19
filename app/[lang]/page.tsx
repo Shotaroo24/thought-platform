@@ -35,7 +35,7 @@ export default async function ArticleListPage({ params }: Props) {
         <div className="article-list">
           {articles.length === 0 ? (
             <p style={{ color: 'var(--muted)' }}>
-              {lang === 'ar' ? 'لا توجد مقالات بعد.' : 'No articles yet.'}
+              {lang === 'ar' ? 'ما فيه مقالات للحين.' : 'No articles yet.'}
             </p>
           ) : (
             <>

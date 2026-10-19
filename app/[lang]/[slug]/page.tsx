@@ -9,6 +9,7 @@ import { ShareBar } from '@/components/ShareBar'
 import { NextArticleCTA } from '@/components/NextArticleCTA'
 import { InstagramDmCTA } from '@/components/InstagramDmCTA'
 import { SITE_URL } from '@/lib/site'
+import type { Lang } from '@/lib/i18n'
 
 type Params = { lang: string; slug: string }
 
@@ -16,10 +17,22 @@ type Params = { lang: string; slug: string }
 // this, an unknown slug would be rendered on demand and reach the filesystem.
 export const dynamicParams = false
 
-function readingTimeMin(text: string, lang: 'ar' | 'en'): number {
+function readingTimeMin(text: string, lang: Lang): number {
   const wpm = lang === 'ar' ? 180 : 238
   const words = text.trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.round(words / wpm))
+}
+
+const arabicDigits = new Intl.NumberFormat('ar-u-nu-arab')
+
+// Arabic counts change the noun's form: 1 and 2 have their own words, 3–10
+// take the plural, 11+ go back to the singular. Spoken Saudi forms throughout.
+function readingTimeLabel(mins: number, lang: Lang): string {
+  if (lang === 'en') return `${mins} min read`
+  if (mins === 1) return 'دقيقة قراءة'
+  if (mins === 2) return 'دقيقتين قراءة'
+  const n = arabicDigits.format(mins)
+  return mins <= 10 ? `${n} دقايق قراءة` : `${n} دقيقة قراءة`
 }
 
 const mdxComponents = {
@@ -100,12 +113,8 @@ export default async function ArticlePage({
   const nextArticle = getNextArticle(lang, slug)
   const canonicalUrl = `${SITE_URL}/${lang}/${slug}`
 
-  const mins = readingTimeMin(content, lang)
-  const readLabel = `${mins} min read`
-  const metaText =
-    lang === 'ar'
-      ? formatArticleDate(frontmatter.date, 'ar')
-      : `${formatArticleDate(frontmatter.date, 'en')} · ${readLabel}`
+  const readLabel = readingTimeLabel(readingTimeMin(content, lang), lang)
+  const metaText = `${formatArticleDate(frontmatter.date, lang)} · ${readLabel}`
 
   return (
     <>

@@ -7,7 +7,7 @@ type Props = {
 }
 
 const LABEL = {
-  next: { ar: 'المقالة التالية', en: 'Next article' },
+  next: { ar: 'المقال الجاي', en: 'Next article' },
 }
 
 export function NextArticleCTA({ next, lang }: Props) {
