@@ -21,11 +21,12 @@ function InstagramIcon() {
 }
 
 // Articles have no comment section by design; the end of every article asks
-// readers to reply by Instagram DM, so the reply path is one tap away.
+// readers to reply by Instagram DM, so the reply path sits right below it.
+// It opens the profile rather than the DM thread (see SOCIAL_LINKS for why).
 export function InstagramDmCTA({ lang }: { lang: Lang }) {
   return (
     <a
-      href={SOCIAL_LINKS.instagramDm}
+      href={SOCIAL_LINKS.instagram}
       target="_blank"
       rel="noopener noreferrer"
       className="dm-cta"
