@@ -14,10 +14,10 @@ SNS プロフィールリンクに貼る。プラットフォームごとに `ut
 
 ```
 # Instagram
-https://yourdomain.com/ar?utm_source=instagram&utm_medium=bio
+https://thelongthought.com/ar?utm_source=instagram&utm_medium=bio
 
 # TikTok
-https://yourdomain.com/ar?utm_source=tiktok&utm_medium=bio
+https://thelongthought.com/ar?utm_source=tiktok&utm_medium=bio
 ```
 
 ### ストーリー——記事ごとの送客
@@ -25,11 +25,11 @@ https://yourdomain.com/ar?utm_source=tiktok&utm_medium=bio
 1記事 = 1リンク。`utm_campaign` に記事 slug を入れる。
 
 ```
-# Instagram ストーリー → 記事「welcome」
-https://yourdomain.com/ar/welcome?utm_source=instagram&utm_medium=story&utm_campaign=welcome
+# Instagram ストーリー → 記事「starting-again」
+https://thelongthought.com/ar/starting-again?utm_source=instagram&utm_medium=story&utm_campaign=starting-again
 
-# TikTok ストーリー → 記事「welcome」
-https://yourdomain.com/ar/welcome?utm_source=tiktok&utm_medium=story&utm_campaign=welcome
+# TikTok ストーリー → 記事「starting-again」
+https://thelongthought.com/ar/starting-again?utm_source=tiktok&utm_medium=story&utm_campaign=starting-again
 ```
 
 ---
@@ -40,7 +40,7 @@ https://yourdomain.com/ar/welcome?utm_source=tiktok&utm_medium=story&utm_campaig
 |---|---|---|
 | `utm_source` | `instagram` / `tiktok` | 流入元 SNS |
 | `utm_medium` | `bio` / `story` | 掲載場所 |
-| `utm_campaign` | 記事 slug（例：`welcome`） | ストーリー時のみ設定 |
+| `utm_campaign` | 記事 slug（例：`starting-again`） | ストーリー時のみ設定 |
 
 ---
 

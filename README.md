@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# the long thought
 
-## Getting Started
+Shotaro のバイリンガル（アラビア語 / 英語）長文記事サイト。
+本番: https://thelongthought.com （`/` は `/ar` にリダイレクト）
 
-First, run the development server:
+Next.js 16（App Router）＋ TypeScript ＋ Tailwind CSS v4。DB・認証・バックエンドなしの完全静的サイトで、`main` への push で Vercel が自動デプロイする。
+
+## セットアップ
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 を開く。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+環境変数は `.env.local`（git 管理外）に置く。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| 変数 | 用途 |
+| --- | --- |
+| `NEXT_PUBLIC_GA_ID` | GA4 の測定 ID。未設定なら GA を読み込まない |
+| `NEXT_PUBLIC_SITE_URL` | canonical・OG・sitemap の基準 URL。未設定時は `https://thelongthought.com` |
 
-## Learn More
+## 記事を書く
 
-To learn more about Next.js, take a look at the following resources:
+`content/ar/<slug>.mdx` と `content/en/<slug>.mdx` を同じ slug で1組置いて push する。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```yaml
+---
+title: "……"            # 必須
+date: "2026-10-19"     # 必須。YYYY-MM-DD
+slug: "starting-again" # 必須。ファイル名と一致（kebab-case）
+description: "……"      # 必須。メタ情報に使う
+pinned: true           # 任意。トップの「Start here」に固定
+ogImage: "/og/xxx.png" # 任意。サイト相対パスのみ
+---
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- アラビア語はサウジ口語で書く（`AGENTS.md`）。
+- 一覧の抜粋は本文の最初の段落から自動で作られる。
+- frontmatter の誤りはビルドエラーになる。
 
-## Deploy on Vercel
+## コマンド
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev           # 開発サーバー
+npm run build         # 本番ビルド
+npm run lint          # ESLint
+npx tsc --noEmit      # 型チェック
+npm audit --omit=dev  # 本番依存の脆弱性チェック（0件を維持）
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 構成
+
+| パス | 内容 |
+| --- | --- |
+| `app/[lang]/` | 一覧（`page.tsx`）・記事（`[slug]/page.tsx`）・共通レイアウト |
+| `app/globals.css` | デザイントークンと全スタイル |
+| `components/` | Header / ArticleCard / GhostNode / ShareBar / InstagramDmCTA / NextArticleCTA / Footer / ScrollDepth |
+| `content/{ar,en}/` | 記事（MDX） |
+| `lib/` | `i18n.ts`（ロケール）・`mdx.ts`（読み込みと検証）・`site.ts`（サイトURL・SNSアカウント） |
+| `proxy.ts` | ロケールなしのパスを `/ar` へリダイレクト |
+| `docs/` | `SECURITY.md`（セキュリティ方針）・`UTM.md`（SNS リンクの UTM 運用） |
+
+SNS アカウント（フッター・DM ボタンのリンク先）は `lib/site.ts` の `SOCIAL_LINKS` で一元管理している。
