@@ -93,7 +93,9 @@ export default async function LangLayout({ children, params }: Props) {
   // the lang/dir attributes.
   const locale = isLang(lang) ? lang : 'ar'
   const isRtl = locale === 'ar'
-  const gaId = process.env.NEXT_PUBLIC_GA_ID
+  // Local `next dev` shares .env.local with production, so without this guard
+  // every test click and scroll lands in the real GA4 property.
+  const gaId = process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_GA_ID : undefined
 
   return (
     <html
