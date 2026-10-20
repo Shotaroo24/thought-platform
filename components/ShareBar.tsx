@@ -2,17 +2,19 @@
 
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { Lang } from '@/lib/i18n'
+import { LikeButton } from '@/components/LikeButton'
 
 type Props = {
   title: string
   url: string
+  slug: string
   lang: Lang
 }
 
 type CopyStatus = 'idle' | 'copied' | 'failed'
 
 const LABEL = {
-  share:  { ar: 'شارك', en: 'Share' },
+  share:  { ar: 'لايك وشارك', en: 'Like & Share' },
   copied: { ar: 'اننسخ الرابط', en: 'Copied' },
   failed: { ar: 'ما ضبط النسخ', en: 'Copy failed' },
 } satisfies Record<string, Record<Lang, string>>
@@ -67,7 +69,7 @@ function subscribeNever(): () => void {
   return () => {}
 }
 
-export function ShareBar({ title, url, lang }: Props) {
+export function ShareBar({ title, url, slug, lang }: Props) {
   // false during SSR and hydration, then the real capability on the client.
   const nativeShare = useSyncExternalStore(subscribeNever, prefersNativeShare, () => false)
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle')
@@ -106,6 +108,7 @@ export function ShareBar({ title, url, lang }: Props) {
     <div className="share-bar">
       <span className="share-label">{LABEL.share[lang]}</span>
       <div className="share-icons">
+        <LikeButton slug={slug} lang={lang} />
         {nativeShare ? (
           <button
             type="button"

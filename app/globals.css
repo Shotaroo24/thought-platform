@@ -11,6 +11,7 @@
   --lang-inactive: #B4AF9F;
   --accent:        #B0542F;
   --rule:          #E4DECF;
+  --heart:         #D23F3A; /* 押したいいね */
   --tint:          color-mix(in srgb, var(--accent) 6%, transparent);
 
   /* Fluid sizing: values marked "fluid" grow linearly from their phone size at
@@ -593,6 +594,26 @@ body > main {
   padding: 0 8px;
   border-color: var(--ink);
   color: var(--ink);
+}
+
+/* Declared after the hover rule so a liked heart stays red under the pointer. */
+.like-btn[data-liked="true"] {
+  border-color: color-mix(in srgb, var(--heart) 45%, var(--rule));
+  color: var(--heart);
+}
+
+.like-btn svg {
+  transition: transform 0.15s;
+}
+
+.like-btn:active svg {
+  transform: scale(0.82);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .like-btn svg {
+    transition: none;
+  }
 }
 
 /* ── InstagramDmCTA ──────────────────────────────────────────── */

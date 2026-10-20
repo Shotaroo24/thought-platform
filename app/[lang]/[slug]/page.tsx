@@ -129,7 +129,7 @@ export default async function ArticlePage({
         </article>
 
         <InstagramDmCTA lang={lang} />
-        <ShareBar title={frontmatter.title} url={canonicalUrl} lang={lang} />
+        <ShareBar title={frontmatter.title} url={canonicalUrl} slug={slug} lang={lang} />
         <NextArticleCTA next={nextArticle} lang={lang} />
       </main>
       <Footer lang={lang} />
