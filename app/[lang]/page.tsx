@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getAllArticlesWithExcerpt, isLang } from '@/lib/mdx'
+import { getAllArticlesWithExcerpt } from '@/lib/mdx'
+import { isLang, type Lang } from '@/lib/i18n'
 import { ArticleCard } from '@/components/ArticleCard'
 import { GhostNode } from '@/components/GhostNode'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import type { Lang } from '@/lib/mdx'
 
 type Props = {
   params: Promise<{ lang: string }>

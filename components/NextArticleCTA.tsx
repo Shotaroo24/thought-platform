@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import type { Frontmatter, Lang } from '@/lib/mdx'
+import type { Frontmatter } from '@/lib/mdx'
+import type { Lang } from '@/lib/i18n'
 
 type Props = {
   next: Frontmatter | null
@@ -8,7 +9,7 @@ type Props = {
 
 const LABEL = {
   next: { ar: 'المقال الجاي', en: 'Next article' },
-}
+} satisfies Record<string, Record<Lang, string>>
 
 export function NextArticleCTA({ next, lang }: Props) {
   if (!next) return null

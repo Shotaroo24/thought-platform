@@ -36,7 +36,7 @@ export function ScrollDepth({ slug, lang }: Props) {
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
-    // 初期チェック（ページが短い場合100%が即発火）
+    // A page shorter than the viewport reaches 100% without any scroll event.
     onScroll()
 
     return () => window.removeEventListener('scroll', onScroll)

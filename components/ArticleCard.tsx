@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { formatArticleDate, type ArticleListItem, type Lang } from '@/lib/mdx'
+import { formatArticleDate, type ArticleListItem } from '@/lib/mdx'
+import type { Lang } from '@/lib/i18n'
 
 type Props = {
   article: ArticleListItem

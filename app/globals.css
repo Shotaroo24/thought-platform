@@ -11,7 +11,7 @@
   --lang-inactive: #B4AF9F;
   --accent:        #B0542F;
   --rule:          #E4DECF;
-  --heart:         #D23F3A; /* 押したいいね */
+  --heart:         #D23F3A; /* a liked heart */
   --tint:          color-mix(in srgb, var(--accent) 6%, transparent);
 
   /* Fluid sizing: values marked "fluid" grow linearly from their phone size at

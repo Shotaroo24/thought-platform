@@ -1,4 +1,4 @@
-import type { Lang } from '@/lib/mdx'
+import type { Lang } from '@/lib/i18n'
 
 const GHOST_TEXT: Record<Lang, string> = {
   en: 'the next article is coming soon…',

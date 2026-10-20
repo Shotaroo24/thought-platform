@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Newsreader, Markazi_Text, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, Tinos } from 'next/font/google'
 import { GoogleAnalytics } from '@next/third-parties/google'
-import { LANGS, isLang } from '@/lib/mdx'
+import { LANGS, OG_LOCALE, isLang } from '@/lib/i18n'
 import { SITE_URL } from '@/lib/site'
 import '@/app/globals.css'
 
@@ -35,8 +35,8 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   variable: '--font-sans-ar',
 })
 
-// Times New Roman と metric-compatible なロゴ専用フォント。
-// 本文のNewsreader(--font-serif)とは別系統として、ワードマークの環境依存を解消する。
+// Logo-only face, metric-compatible with Times New Roman, so the wordmark looks
+// the same on every device instead of depending on the installed Times.
 const tinos = Tinos({
   weight: ['400'],
   subsets: ['latin'],
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const description =
     lang === 'ar' ? 'منصة فكرية للكتابة العميقة' : 'A platform for deep, slow writing.'
-  const locale = lang === 'ar' ? 'ar_SA' : 'en_US'
+  const locale = OG_LOCALE[lang === 'ar' ? 'ar' : 'en']
 
   return {
     metadataBase: new URL(SITE_URL),

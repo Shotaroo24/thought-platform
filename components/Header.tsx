@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { Lang } from '@/lib/mdx'
+import type { Lang } from '@/lib/i18n'
 
 type Props = {
   lang: Lang

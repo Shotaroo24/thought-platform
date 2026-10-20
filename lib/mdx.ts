@@ -4,9 +4,6 @@ import yaml from 'js-yaml'
 import type { Lang } from '@/lib/i18n'
 import { keepPhrasesTogether } from '@/lib/typography'
 
-export { LANGS, isLang } from '@/lib/i18n'
-export type { Lang } from '@/lib/i18n'
-
 export type Frontmatter = {
   title: string
   date: string
@@ -102,7 +99,8 @@ function validateFrontmatter(data: unknown, lang: Lang, slug: string): Frontmatt
   }
   // Site-relative only: frontmatter must not be able to point OG/Twitter
   // metadata at a third-party host.
-  if (ogImage !== undefined && (typeof ogImage !== 'string' || !/^\/[^/\\]/.test(ogImage))) {
+  const isSiteRelative = typeof ogImage === 'string' && /^\/[^/\\]/.test(ogImage)
+  if (ogImage !== undefined && !isSiteRelative) {
     throw new Error(
       `${source}: frontmatter "ogImage" must be a site-relative path like "/og/foo.png"`
     )
@@ -114,7 +112,7 @@ function validateFrontmatter(data: unknown, lang: Lang, slug: string): Frontmatt
     slug: declaredSlug,
     description: requireString(record, 'description', source),
     ...(pinned === undefined ? {} : { pinned }),
-    ...(ogImage === undefined ? {} : { ogImage: ogImage as string }),
+    ...(typeof ogImage === 'string' ? { ogImage } : {}),
   }
 }
 
@@ -204,8 +202,8 @@ export function formatArticleDate(date: string, lang: Lang): string {
   }).format(new Date(date))
 }
 
-// 日付昇順で「次の記事」（現在より古いもの）を返す。なければ null
-// ピン留め記事（イントロ）は次の記事の連鎖から除外する
+// The next article is the one dated just before the current one, or null at
+// the end of the chain. The pinned intro article stays out of the chain.
 export function getNextArticle(lang: Lang, currentSlug: string): Frontmatter | null {
   const articles = getAllMdxFrontmatter(lang).filter((a) => !a.pinned) // newest-first
   const idx = articles.findIndex((a) => a.slug === currentSlug)

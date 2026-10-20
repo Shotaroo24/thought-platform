@@ -8,6 +8,12 @@ export type Lang = (typeof LANGS)[number]
 // there is no preference at all (crawlers, privacy browsers).
 export const FALLBACK_LANG: Lang = 'en'
 
+// Open Graph wants a territory as well as a language.
+export const OG_LOCALE: Record<Lang, string> = {
+  ar: 'ar_SA',
+  en: 'en_US',
+}
+
 // Route params arrive as plain strings, so every entry point narrows them here
 // instead of casting. An unknown locale must 404, never reach the filesystem.
 export function isLang(value: string): value is Lang {

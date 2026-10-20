@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { formatArticleDate, getMdxBySlug, getMdxSlugs, getNextArticle, isLang } from '@/lib/mdx'
+import { formatArticleDate, getMdxBySlug, getMdxSlugs, getNextArticle } from '@/lib/mdx'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -9,7 +9,7 @@ import { ShareBar } from '@/components/ShareBar'
 import { NextArticleCTA } from '@/components/NextArticleCTA'
 import { InstagramDmCTA } from '@/components/InstagramDmCTA'
 import { SITE_URL } from '@/lib/site'
-import type { Lang } from '@/lib/i18n'
+import { OG_LOCALE, isLang, type Lang } from '@/lib/i18n'
 import { keepPhrasesTogether } from '@/lib/typography'
 
 type Params = { lang: string; slug: string }
@@ -68,8 +68,8 @@ export async function generateMetadata({
   const { frontmatter } = article
   const canonical = `${SITE_URL}/${lang}/${slug}`
   const ogImage = frontmatter.ogImage ?? '/og/default.png'
-  const locale = lang === 'ar' ? 'ar_SA' : 'en_US'
-  const altLocale = lang === 'ar' ? 'en_US' : 'ar_SA'
+  const locale = OG_LOCALE[lang]
+  const altLocale = OG_LOCALE[lang === 'ar' ? 'en' : 'ar']
 
   return {
     title: frontmatter.title,
