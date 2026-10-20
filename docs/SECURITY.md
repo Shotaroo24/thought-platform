@@ -1,12 +1,17 @@
 # セキュリティ方針と残存リスク
 
-最終監査: 2026-10-19
+最終監査: 2026-10-20（いいね機能の追加後）
 
 ## 脅威モデル
 
 ユーザー入力の受け口（フォーム / API route / 認証 / DB）を持たない静的生成サイト。
 攻撃面は (1) URL のルートパラメータ、(2) 配信ヘッダー、(3) 依存関係、(4) ビルド時に読む
 `content/**/*.mdx` の 4 つに限られる。
+
+いいね（`components/LikeButton.tsx`）はサーバーに何も送らない。ブラウザの localStorage に
+`liked:<slug>` を `"1"` で置き、GA4 に `like` / `unlike` イベントを送るだけ。読み出した値は
+`=== '1'` の比較にしか使わず、描画も URL 組み立てもしないので、localStorage が改ざんされても
+ハートの塗りが変わるだけで済む。
 
 ## 実装している防御
 
@@ -47,6 +52,14 @@ CSP, HSTS（2年 + preload）, `X-Content-Type-Options`, `Referrer-Policy`,
 
 ## 受け入れたトレードオフ
 
+### いいね数は改ざんできる
+
+GA4 の計測 ID はページに公開されており、誰でも `like` イベントを任意の回数送れる
+（localStorage を消せば同じブラウザからも押し直せる）。数は読者に表示せず、書き手が
+傾向を見るためだけに使うので許容する。数を公開表示するときは、サーバー側で
+レート制限と重複排除を持つ保存先に切り替えること。
+
+
 ### CSP の `script-src 'unsafe-inline'`
 
 Next.js のハイドレーション用ブートストラップと GA4 スニペットがインラインスクリプトのため。
@@ -61,6 +74,12 @@ nonce 方式はリクエストごとに proxy で nonce を発行する必要が
 解決策がない。lint 実行時に自分で書いた glob を処理するだけで、本番バンドルにも
 ランタイムにも含まれないため据え置く。`npm audit --omit=dev` は 0 件。
 
+### 開発サーバーでは GA4 を読み込まない
+
+`.env.local` の `NEXT_PUBLIC_GA_ID` はローカルと本番で共通のため、`next dev` での確認操作が
+本番の GA4 プロパティに混ざっていた。`app/[lang]/layout.tsx` で `NODE_ENV === 'production'`
+のときだけ読み込む（本番ビルドの HTML に gtag が入ることを確認済み）。
+
 ## 依存関係
 
 - `next` は 16.4.2 以上を維持する。16.2.9 には critical（RCE / キャッシュポイズニング /
@@ -68,6 +87,7 @@ nonce 方式はリクエストごとに proxy で nonce を発行する必要が
 - frontmatter の読み取りは `gray-matter` をやめ `js-yaml@4` に直接依存（`JSON_SCHEMA`、
   YAML の型強制とカスタムタグを無効化）。`gray-matter` が固定していた `js-yaml@3` 系の
   CPU 枯渇勧告（修正がバックポートされない）をツリーから除去するため。
+- `@next/third-parties` は `next` と同じ 16.4.2 系に揃える。
 - `postcss-selector-parser` は `overrides` で `^7.1.6` に固定（`@tailwindcss/typography`
   が脆弱な 6.0.10 を pin している）。生成 CSS がバイト単位で同一であることを確認済み。
 
