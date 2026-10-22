@@ -1,0 +1,318 @@
+/* Instagram carousel image tool (local dev only). The slide styles are drawn
+   at the export size, 1080×1350 (4:5), and the preview scales them down. A
+   1080px-wide image is shown about 375pt wide on a phone, so the 58px body
+   reads at about 20pt there, close to the site's Arabic body on a phone.
+
+   The editor and the previews share one scale, so a line in the editor wraps
+   at the same word as the same line in the image: the author can see where
+   each line ends while deciding where to put "---". */
+
+.tool {
+  --slide-scale: 0.4;
+  /* Headings keep their 68:60 ratio to the body. */
+  --slide-body-size: 58px;
+  --slide-heading-size: calc(var(--slide-body-size) * 68 / 60);
+  /* One line of body text. A blank line in the editor is this tall, so it is
+     also the space between paragraphs and around headings in the image. */
+  --slide-line: calc(var(--slide-body-size) * 1.45);
+  /* Wide enough for "مرحبا فيكم جميعاً، صار لي فترة — معكم شوتارو." on one line at
+     58px, and still clear of the ~34px the profile grid crops from each side. */
+  --slide-side-padding: 100px;
+  --slide-text-width: calc(1080px - 2 * var(--slide-side-padding));
+  display: grid;
+  grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+  gap: 2rem;
+  padding: 2rem var(--gutter);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/* The panel stays in view while the previews scroll, and the editor scrolls
+   on its own inside it, so any part of the text can sit next to its image. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+}
+
+@media (max-width: 900px) {
+  .tool {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+.panelTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.textarea,
+.input {
+  font: inherit;
+  font-family: var(--font-serif);
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+}
+
+.input {
+  width: 100%;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.editorField {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The scrollbar belongs to this wrapper, not to the textarea: a scrollbar
+   inside the textarea would take width from the text and move the line ends. */
+.editorScroll {
+  flex: 1 1 auto;
+  min-height: 12rem;
+  width: max-content;
+  max-width: 100%;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+.editorScroll:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Same measure and type as a slide's paragraph at preview scale. The textarea
+   grows with the text (it never scrolls itself) and the wrapper scrolls it. */
+.textarea {
+  display: block;
+  box-sizing: content-box;
+  width: calc(var(--slide-text-width) * var(--slide-scale));
+  font-size: calc(var(--slide-body-size) * var(--slide-scale));
+  line-height: calc(var(--slide-line) * var(--slide-scale));
+  letter-spacing: 0;
+  min-height: 100%;
+  field-sizing: content;
+  resize: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+}
+
+.input:focus-visible,
+.button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--paper);
+  background: var(--ink);
+  border: 0;
+  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.buttonQuiet {
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule);
+  font-weight: 400;
+  padding: 0.3rem 0.7rem;
+  font-size: 12.5px;
+}
+
+.status {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.error {
+  color: var(--heart);
+  font-size: 12.5px;
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(1080px * var(--slide-scale)));
+  gap: 1.5rem;
+  align-content: start;
+  justify-content: start;
+}
+
+.empty {
+  color: var(--muted);
+  margin: 0;
+}
+
+.previewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.previewFrame {
+  width: calc(1080px * var(--slide-scale));
+  height: calc(1350px * var(--slide-scale));
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+.previewFrameOverflow {
+  outline: 2px solid var(--heart);
+}
+
+.previewScale {
+  transform: scale(var(--slide-scale));
+  transform-origin: top left;
+}
+
+/* Offscreen copy of the slide used to measure whether text fits. */
+.measure {
+  position: fixed;
+  top: 0;
+  left: -20000px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.previewMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.overflowNote {
+  color: var(--heart);
+  font-size: 12px;
+}
+
+/* ── The slide itself (export size) ─────────────────────────── */
+
+.slide {
+  width: 1080px;
+  height: 1350px;
+  display: flex;
+  flex-direction: column;
+  padding: 120px var(--slide-side-padding) 96px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  letter-spacing: 0;
+}
+
+.rule {
+  width: 72px;
+  height: 3px;
+  background: var(--accent);
+}
+
+/* Text starts at the same height on every slide, so a heading or the title
+   sits in one place as the reader swipes. */
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 56px 0;
+  overflow: hidden;
+}
+
+/* Spacing mirrors the editor line for line: a line break the author typed
+   stays a line break (pre-line), and a blank line becomes one line of space.
+   Wrapping is plain greedy, not `pretty`, because the editor's textarea can
+   only wrap greedily and the lines in the image must break where it shows. */
+.paragraph {
+  font-size: var(--slide-body-size);
+  line-height: var(--slide-line);
+  white-space: pre-line;
+  margin: 0;
+}
+
+.paragraph + .paragraph,
+* + .heading,
+.heading + * {
+  margin-top: var(--slide-line);
+}
+
+/* As tall as one editor line, so headings take the same room on both sides. */
+.heading {
+  font-size: var(--slide-heading-size);
+  font-weight: 600;
+  line-height: var(--slide-line);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  min-height: 40px;
+}
+
+.wordmark {
+  font-family: var(--font-times), 'Times New Roman', Times, serif;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.counter {
+  font-family: var(--font-ui);
+  font-size: 28px;
+  color: var(--muted);
+  line-height: 1;
+  white-space: nowrap;
+}
