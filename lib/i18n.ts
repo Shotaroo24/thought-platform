@@ -4,9 +4,21 @@ export const LANGS = ['ar', 'en'] as const
 
 export type Lang = (typeof LANGS)[number]
 
-// Used when the visitor's browser prefers neither Arabic nor English, and when
-// there is no preference at all (crawlers, privacy browsers).
-export const FALLBACK_LANG: Lang = 'en'
+// Used when there is no language preference at all (crawlers, privacy
+// browsers): the site is written for Gulf Arabic readers first.
+export const DEFAULT_LANG: Lang = 'ar'
+
+// Used when the browser states preferences but none we support (e.g. Japanese
+// only): such a visitor is more likely to read English than Arabic.
+export const FOREIGN_FALLBACK_LANG: Lang = 'en'
+
+// Arab League members (ISO 3166-1 alpha-2). Many phones there are set to
+// English, yet GA showed those visitors leaving /en within seconds while /ar
+// readers stayed, so the country outranks the browser language.
+const ARABIC_SPEAKING_COUNTRIES: ReadonlySet<string> = new Set([
+  'AE', 'BH', 'DJ', 'DZ', 'EG', 'IQ', 'JO', 'KM', 'KW', 'LB', 'LY',
+  'MA', 'MR', 'OM', 'PS', 'QA', 'SA', 'SD', 'SO', 'SY', 'TN', 'YE',
+])
 
 // Open Graph wants a territory as well as a language.
 export const OG_LOCALE: Record<Lang, string> = {
@@ -26,7 +38,7 @@ export function isLang(value: string): value is Lang {
 // ignored so "ar-SA" and "en-GB" match. With two locales a tiny parser is
 // enough; a negotiation library would add dependencies for no gain.
 export function negotiateLang(acceptLanguage: string | null): Lang {
-  if (!acceptLanguage) return FALLBACK_LANG
+  if (!acceptLanguage) return DEFAULT_LANG
 
   let best: { lang: Lang; q: number } | null = null
   for (const entry of acceptLanguage.split(',')) {
@@ -41,5 +53,16 @@ export function negotiateLang(acceptLanguage: string | null): Lang {
 
     if (best === null || q > best.q) best = { lang: primary, q }
   }
-  return best?.lang ?? FALLBACK_LANG
+  return best?.lang ?? FOREIGN_FALLBACK_LANG
+}
+
+// Picks the language for a visitor arriving on a path without a locale. The
+// country comes from the hosting provider's geo-IP lookup and is null when
+// unknown (local dev, other hosts), in which case only the browser decides.
+export function chooseLang(
+  acceptLanguage: string | null,
+  country: string | null
+): Lang {
+  if (country && ARABIC_SPEAKING_COUNTRIES.has(country.toUpperCase())) return 'ar'
+  return negotiateLang(acceptLanguage)
 }

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { negotiateLang } from './i18n.ts'
+import { chooseLang, negotiateLang } from './i18n.ts'
 
 test('Arabic browsers get Arabic, including regional variants', () => {
   assert.equal(negotiateLang('ar'), 'ar')
@@ -34,12 +34,32 @@ test('browsers preferring neither language fall back to English', () => {
   assert.equal(negotiateLang('*'), 'en')
 })
 
-test('a missing or empty header falls back to English', () => {
-  assert.equal(negotiateLang(null), 'en')
-  assert.equal(negotiateLang(''), 'en')
+test('a missing or empty header falls back to Arabic', () => {
+  assert.equal(negotiateLang(null), 'ar')
+  assert.equal(negotiateLang(''), 'ar')
 })
 
 test('q=0 and malformed q-values are not treated as a preference', () => {
   assert.equal(negotiateLang('ar;q=0,ja'), 'en')
   assert.equal(negotiateLang('ar;q=abc,en;q=0.1'), 'en')
+})
+
+test('visitors in Arab countries get Arabic even with an English browser', () => {
+  assert.equal(chooseLang('en-US,en;q=0.9', 'SA'), 'ar')
+  assert.equal(chooseLang('en-GB', 'EG'), 'ar')
+  assert.equal(chooseLang(null, 'AE'), 'ar')
+  assert.equal(chooseLang('en', 'iq'), 'ar')
+})
+
+test('outside Arab countries the browser language decides', () => {
+  assert.equal(chooseLang('en-US,en;q=0.9', 'US'), 'en')
+  assert.equal(chooseLang('ar-SA', 'US'), 'ar')
+  assert.equal(chooseLang('ja-JP,ja;q=0.9', 'JP'), 'en')
+  assert.equal(chooseLang(null, 'JP'), 'ar')
+})
+
+test('an unknown country leaves the decision to the browser', () => {
+  assert.equal(chooseLang('en-US', null), 'en')
+  assert.equal(chooseLang('ar', ''), 'ar')
+  assert.equal(chooseLang(null, null), 'ar')
 })

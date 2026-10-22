@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { LANGS, negotiateLang } from '@/lib/i18n'
+import { LANGS, chooseLang } from '@/lib/i18n'
 
 const LOCALES: readonly string[] = LANGS
 
@@ -12,15 +12,20 @@ export function proxy(request: NextRequest) {
   )
 
   if (!hasLocale) {
-    // Arabic browsers get Arabic, English browsers English, everyone else
-    // English. Links that already carry a locale (/ar/..., /en/...) are never
+    // Visitors in the Arab world get Arabic whatever their browser language;
+    // elsewhere the browser decides, and no preference at all means Arabic.
+    // Links that already carry a locale (/ar/..., /en/...) are never
     // overridden, so shared article links open in the language they were sent in.
-    const lang = negotiateLang(request.headers.get('accept-language'))
+    const lang = chooseLang(
+      request.headers.get('accept-language'),
+      // Set by Vercel's edge from the client IP; absent in local dev.
+      request.headers.get('x-vercel-ip-country')
+    )
     const url = request.nextUrl.clone()
     url.pathname = `/${lang}${pathname === '/' ? '' : pathname}`
     const response = NextResponse.redirect(url)
-    // The target depends on the request header, so no cache may reuse it across visitors.
-    response.headers.set('Vary', 'Accept-Language')
+    // The target depends on request headers, so no cache may reuse it across visitors.
+    response.headers.set('Vary', 'Accept-Language, X-Vercel-IP-Country')
     response.headers.set('Cache-Control', 'private, no-store')
     return response
   }
