@@ -9,8 +9,8 @@ const NBSP = ' '
 // Arabic terms without their attached prefixes: "سوشيال ميديا" also covers
 // "السوشيال ميديا" and "للسوشيال ميديا".
 const KEEP_TOGETHER: Record<Lang, readonly string[]> = {
-  ar: ['سوشيال ميديا', 'عن طريق', 'vibe coding', 'Claude Code'],
-  en: ['Claude Code'],
+  ar: ['سوشيال ميديا', 'عن طريق', 'vibe coding', 'Claude Code', 'the long thought'],
+  en: ['Claude Code', 'the long thought'],
 }
 
 // Arabic prefixes written with a tatweel and a space before a Latin word

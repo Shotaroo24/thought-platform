@@ -19,6 +19,13 @@ test('Latin terms inside Arabic text stay together', () => {
   )
 })
 
+test('the site name stays on one line', () => {
+  assert.equal(
+    keepPhrasesTogether('تحت اسم the long thought.', 'ar'),
+    `تحت اسم the${NBSP}long${NBSP}thought.`
+  )
+})
+
 test('a tatweel prefix sticks to the word after it', () => {
   assert.equal(keepPhrasesTogether('من الـ input، بديت', 'ar'), `من الـ${NBSP}input، بديت`)
   assert.equal(keepPhrasesTogether('سويته بـ vibe', 'ar'), `سويته بـ${NBSP}vibe`)
